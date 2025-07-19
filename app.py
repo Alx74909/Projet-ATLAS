@@ -1,12 +1,17 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import joblib
+import pickle
 
 # --- Chargement du pipeline, sélecteur et modèle ---
-pipeline = joblib.load("final_preprocessing_pipeline.joblib")
-selector = joblib.load("final_feature_selector.joblib")
-model = joblib.load("final_model_reduced.joblib")
+with open("final_preprocessing_pipeline.pkl", "rb") as f:
+    pipeline = pickle.load(f)
+
+with open("final_feature_selector.pkl", "rb") as f:
+    selector = pickle.load(f)
+
+with open("final_model_reduced.pkl", "rb") as f:
+    model = pickle.load(f)
 
 st.title("📦 Prédiction des Retards de Livraison")
 st.markdown("Entrez les informations de commande pour prédire un risque de retard.")
