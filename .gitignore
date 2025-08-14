@@ -4,3 +4,8 @@ aiven_password.txt
 *.env
 .streamlit/secrets.toml
 *.pem
+.env
+.env.*
+*.env
+.streamlit/secrets.toml
+*.pem
