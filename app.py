@@ -4,14 +4,36 @@ import numpy as np
 import pickle
 
 # --- Chargement du pipeline, sélecteur et modèle ---
-with open("final_preprocessing_pipeline.pkl", "rb") as f:
-    pipeline = pickle.load(f)
 
-with open("final_feature_selector.pkl", "rb") as f:
-    selector = pickle.load(f)
+# --- Chargement des artefacts depuis une Release GitHub (cache /tmp) ---
+import urllib.request
+from pathlib import Path
 
-with open("final_model_reduced.pkl", "rb") as f:
-    model = pickle.load(f)
+# ⚠️ REMPLACE ces URLs par celles de TA release
+ARTIFACT_URLS = {
+    "final_preprocessing_pipeline.pkl": "https://github.com/Alx74909/Projet-ATLAS/releases/download/models-v1/final_preprocessing_pipeline.pkl",
+    "final_feature_selector.pkl":       "https://github.com/Alx74909/Projet-ATLAS/releases/download/models-v1/final_feature_selector.pkl",
+    "final_model_reduced.pkl":          "https://github.com/Alx74909/Projet-ATLAS/releases/download/models-v1/final_model_reduced.pkl",
+}
+
+def _fetch(path: Path, url: str):
+    path.parent.mkdir(parents=True, exist_ok=True)
+    if not path.exists() or path.stat().st_size == 0:
+        urllib.request.urlretrieve(url, path)
+
+@st.cache_resource(show_spinner="Chargement des modèles…")
+def load_artifacts():
+    cache_dir = Path("/tmp/artifacts")
+    objs = []
+    for name, url in ARTIFACT_URLS.items():
+        dest = cache_dir / name
+        _fetch(dest, url)
+        with open(dest, "rb") as f:
+            objs.append(pickle.load(f))
+    return tuple(objs)
+
+pipeline, selector, model = load_artifacts()
+
 
 st.title("📦 Prédiction des Retards de Livraison")
 st.markdown("Entrez les informations de commande pour prédire un risque de retard.")
