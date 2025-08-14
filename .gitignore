@@ -1,0 +1,6 @@
+aiven_password.txt
+.env
+.env.*
+*.env
+.streamlit/secrets.toml
+*.pem
